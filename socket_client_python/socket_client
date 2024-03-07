@@ -1,0 +1,26 @@
+import socket
+import json
+
+ipDict = {
+    'server': ('localhost', 3000),
+    'client': ('localhost', 3001),
+}
+
+def socket_request():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(ipDict['client'])
+        s.connect(ipDict['server'])
+
+        data = {
+            "startNum": 1,
+            "endNum": 5
+        }
+
+        message = json.dumps(data)
+        s.sendall(message.encode('utf-8'))
+
+        data = s.recv(1024)
+        print(f"Response: {data.decode('utf-8')}")
+
+if __name__ == '__main__':
+    socket_request()
