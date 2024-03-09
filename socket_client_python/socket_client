@@ -6,6 +6,16 @@ ipDict = {
     'client': ('localhost', 3001),
 }
 
+def socket_connect():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.connect(ipDict['server'])
+            print("Connection Success")
+            data = s.recv(1024)
+            print(f"Received Data : {data.decode()}")
+        except socket.error as e:
+            print(f"Connection Fail : {e}")
+
 def socket_request():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(ipDict['client'])
@@ -23,4 +33,5 @@ def socket_request():
         print(f"Response: {data.decode('utf-8')}")
 
 if __name__ == '__main__':
+    socket_connect()
     socket_request()
