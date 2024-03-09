@@ -1,0 +1,44 @@
+import subprocess
+import sys
+
+server = 'ip,port'
+database = 'database'
+username = 'username'
+password = 'password'
+
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+try:
+    import pyodbc
+except ImportError:
+    install('pyodbc')
+    import pyodbc
+
+def mssql_select(queryParam):
+    connInfo_str = (f'DRIVER={{ODBC Driver 18 for SQL Server}};'
+                    f'SERVER={server};'
+                    f'DATABASE={database};'
+                    f'UID={username};'
+                    f'PWD={password};'
+                    f'TrustServerCertificate=Yes')
+
+    conn = pyodbc.connect(connInfo_str)
+    cursor = conn.cursor()
+
+    query = "SELECT * FROM Table WHERE Column = ?"
+    cursor.execute(query, (queryParam,))
+
+    rows = cursor.fetchall()
+    if rows:
+        for row in rows:
+            print(row)
+    else:
+        print("Data Not Found")
+
+    conn.close()
+
+
+if __name__ == '__main__':
+    queryParam_input = input("Enter Param : ")
+    mssql_select(queryParam_input)
